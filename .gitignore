@@ -1,0 +1,41 @@
+﻿# Java and Maven
+target/
+**/target/
+
+# JavaScript dependencies and builds
+node_modules/
+**/node_modules/
+dist/
+build/
+coverage/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE and operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local databases and persistent container data
+*.sqlite
+*.db
+pgdata/
+.docker-data/
+
+# Cloud credentials and private keys
+.aws/
+*.pem
+*.key
+secrets/
+
+# Temporary files
+*.tmp
+*.swp
