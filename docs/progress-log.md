@@ -22,3 +22,26 @@
 - Commit:
 - Lessons learned or blockers:
 - Next step:
+
+## Session 2: First Spring Boot API
+
+### Completed
+- [ ] Created or verified the Spring Boot backend
+- [ ] Implemented the health endpoint
+- [ ] Added a controller test
+- [ ] Ran Maven tests successfully
+- [ ] Started the application locally
+- [ ] Verified the endpoint response
+
+### Concepts Learned
+- Java application entry point
+- Spring Boot application startup
+- REST controllers
+- HTTP GET requests
+- JSON responses
+- Controller testing with MockMvc
+
+### Next Steps
+- Understand dependency injection and service layers
+- Add DTOs and request validation
+- Begin PostgreSQL configuration and database migrations
