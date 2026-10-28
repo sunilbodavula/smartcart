@@ -1,0 +1,22 @@
+
+services:
+  smartcart-db:
+    image: postgres:16-alpine
+    container_name: smartcart-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smartcart
+      POSTGRES_USER: smartcart_user
+      POSTGRES_PASSWORD: smartcart_local_password
+    ports:
+      - "127.0.0.1:15433:5432"
+    volumes:
+      - smartcart_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartcart_user -d smartcart"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  smartcart_postgres_data:
