@@ -1,6 +1,7 @@
 package com.smartcart.product;
 
-
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -38,5 +39,21 @@ class ProductControllerTest {
                 )
             )
             .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    void getProductByIdReturnsNotFoundWhenProductDoesNotExist()
+    throws Exception{
+
+        given(productService.getProductById(999L))
+            .willThrow(
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Product not found with id: 999"
+                )
+            );
+
+        mockMvc.perform(get("/api/products/999"))
+            .andExpect(status().isNotFound());
     }
 }
