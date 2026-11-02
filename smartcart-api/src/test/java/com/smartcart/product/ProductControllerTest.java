@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,5 +57,17 @@ class ProductControllerTest {
 
         mockMvc.perform(get("/api/products/999"))
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createProductReturnsBadRequestWhenRequiredFieldsAreMissing()
+    throws Exception{
+
+        mockMvc.perform(post("/api/products")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(productService);
     }
 }
