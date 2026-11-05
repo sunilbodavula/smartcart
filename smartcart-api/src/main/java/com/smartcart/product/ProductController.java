@@ -1,6 +1,8 @@
 package com.smartcart.product;
 
 
+import com.smartcart.product.dto.ProductCreateRequest;
+import com.smartcart.product.dto.ProductResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -18,19 +20,19 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts(){
+    public List<ProductResponse> getAllProducts(){
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id){
+    public ProductResponse getProductById(@PathVariable Long id){
         return productService.getProductById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Product createProduct(@Valid @RequestBody Product product){
-        return productService.createProduct(product);
+    public ProductResponse createProduct(@Valid @RequestBody ProductCreateRequest request){
+        return productService.createProduct(request);
     }
 
 }
