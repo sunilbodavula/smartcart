@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 @Service
@@ -57,5 +60,24 @@ public class ProductService {
             product.getStockQuantity(),
             product.getCreatedAt()
         );
+    }
+
+    public Page<ProductResponse> getProducts(
+        String search,
+        Pageable pageable
+    ){
+        Page<Product> products;
+
+        if(search == null || search.isBlank()){
+            products = productRepository.findAll(pageable);
+        }else{
+            products = productRepository
+                .findByNameContainingIgnoreCase(
+                    search.trim(),
+                    pageable
+                );
+        }
+
+        return products.map(this::mapToResponse);
     }
 }
