@@ -11,6 +11,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import static org.mockito.ArgumentMatchers.anyString;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -44,8 +51,16 @@ class ProductControllerTest {
             OffsetDateTime.parse("2026-11-05T10:00:00Z")
         );
 
-        given(productService.getAllProducts())
-            .willReturn(List.of(product));
+        Page<ProductResponse> productPage = new PageImpl<>(
+            List.of(product),
+            PageRequest.of(0, 10),
+            1
+        );
+
+        given(productService.getProducts(
+            anyString(),
+            any(Pageable.class)
+        )).willReturn(productPage);
 
         mockMvc.perform(get("/api/products"))
             .andExpect(status().isOk())
@@ -54,12 +69,14 @@ class ProductControllerTest {
                     MediaType.APPLICATION_JSON
                 )
             )
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].name").value("Wireless Mouse"))
-            .andExpect(jsonPath("$[0].price").value(599.00))
-            .andExpect(jsonPath("$[0].stockQuantity").value(20));
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content.length()").value(1))
+            .andExpect(jsonPath("$.content[0].id").value(1))
+            .andExpect(jsonPath("$.content[0].name").value("Wireless Mouse"))
+            .andExpect(jsonPath("$.content[0].price").value(599.00))
+            .andExpect(jsonPath("$.content[0].stockQuantity").value(20))
+            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpect(jsonPath("$.totalPages").value(1));
     }
 
     @Test

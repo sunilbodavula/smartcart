@@ -3,6 +3,8 @@ package com.smartcart.product;
 
 import com.smartcart.product.dto.ProductCreateRequest;
 import com.smartcart.product.dto.ProductResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -20,8 +22,15 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts(){
-        return productService.getAllProducts();
+    public Page<ProductResponse> getAllProducts(
+        @RequestParam(defaultValue = "") String search,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ){
+        return productService.getProducts(
+            search,
+            PageRequest.of(page, size)
+        );
     }
 
     @GetMapping("/{id}")
