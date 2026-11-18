@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @RestController
@@ -27,6 +29,22 @@ public class ProductController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ){
+        //validate page number
+        if(page < 0){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Page number cannot be negative"
+            );
+        }
+
+        //validate page size
+        if(size < 1 || size > 50){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Page size must be between 1 and 50"
+            );
+        }
+
         return productService.getProducts(
             search,
             PageRequest.of(page, size)

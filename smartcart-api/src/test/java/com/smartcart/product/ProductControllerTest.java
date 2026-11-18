@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import static org.mockito.Mockito.verify;
+
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
@@ -77,6 +79,11 @@ class ProductControllerTest {
             .andExpect(jsonPath("$.content[0].stockQuantity").value(20))
             .andExpect(jsonPath("$.totalElements").value(1))
             .andExpect(jsonPath("$.totalPages").value(1));
+
+        verify(productService).getProducts(
+            "",
+            PageRequest.of(0, 10)
+        );
     }
 
     @Test
@@ -137,6 +144,50 @@ class ProductControllerTest {
         mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(productService);
+    }
+
+    @Test
+    void getALlProductsSupportsSearchAndPagination() throws Exception{
+
+        given(productService.getProducts(
+            anyString(),
+            any(Pageable.class)
+        )).willReturn(new PageImpl<ProductResponse>(List.of()));
+
+        mockMvc.perform(get("/api/products")
+            .param("search", "keyboard")
+            .param("page", "1")
+            .param("size", "5"))
+            .andExpect(status().isOk());
+
+        verify(productService).getProducts(
+            "keyboard",
+            PageRequest.of(1, 5)
+        );
+    }
+
+    @Test
+    void getAllProductsReturnsBadRequestForNegativePage()
+    throws Exception{
+
+        mockMvc.perform(get("/api/products")
+            .param("page", "-1")
+            .param("size", "10"))
+            .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(productService);
+    }
+
+    @Test
+    void getAllProductsReturnsBadRequestForExcessivePageSize()
+    throws Exception{
+
+        mockMvc.perform(get("/api/products")
+            .param("page", "0")
+            .param("size", "100"))
             .andExpect(status().isBadRequest());
 
         verifyNoInteractions(productService);
